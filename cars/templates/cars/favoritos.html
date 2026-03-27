@@ -1,0 +1,75 @@
+{% extends 'cars/base.html' %}
+{% load l10n %}
+
+{% block title %}Meus Favoritos{% endblock %}
+
+{% block content %}
+
+<h2 class="mb-4">❤️ Meus Carros Favoritos</h2>
+
+<div class="row">
+  {% for carro in carros %}
+    <div class="col-md-4 mb-4">
+
+      <div class="card custom-card h-100">
+
+        {% if carro.imagem %}
+          <img src="{{ carro.imagem.url }}" class="card-img-top">
+        {% endif %}
+
+        <div class="card-body d-flex flex-column">
+
+          <h5 class="card-title">
+            {{ carro.nome }}
+          </h5>
+
+          <small class="text-muted">
+            {{ carro.marca }}
+          </small>
+
+          {% if carro.categoria %}
+            <span class="badge mb-2
+              {% if carro.categoria == 'SUV' %}badge-suv
+              {% elif carro.categoria == 'SEDAN' %}badge-sedan
+              {% elif carro.categoria == 'HATCH' %}badge-hatch
+              {% elif carro.categoria == 'PICAPE' %}badge-picape
+              {% elif carro.categoria == 'ESPORTE' %}badge-esporte
+              {% endif %}
+            ">
+              {{ carro.categoria }}
+            </span>
+          {% endif %}
+
+          <p class="mb-1 small text-muted">
+            ⛽ {{ carro.combustivel|default:"-" }}
+          </p>
+
+          <p class="text-success fw-bold">
+            💰 R$ {{ carro.preco|localize }}
+          </p>
+
+          <p>
+            🔥 {{ carro.score|floatformat:2 }}
+          </p>
+
+          <a href="{% url 'detalhe_carro' carro.id %}" class="btn btn-primary mt-auto">
+            Ver detalhes
+          </a>
+
+        </div>
+
+      </div>
+
+    </div>
+  {% empty %}
+    <div class="text-center mt-5">
+      <h4>😢 Nenhum favorito ainda</h4>
+      <p class="text-muted">Clique no ❤️ para salvar carros</p>
+      <a href="{% url 'lista_carros' %}" class="btn btn-primary mt-3">
+        Explorar carros
+      </a>
+    </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

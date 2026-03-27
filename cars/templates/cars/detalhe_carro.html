@@ -1,0 +1,77 @@
+{% extends 'cars/base.html' %}
+{% load l10n %}
+
+{% block title %}{{ carro.nome }}{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+  <div class="row">
+
+    <!-- Imagem -->
+    <div class="col-md-6">
+      {% if carro.imagem %}
+        <img src="{{ carro.imagem.url }}" 
+             class="img-fluid rounded shadow"
+             style="width: 100%; height: 400px; object-fit: cover;">
+      {% else %}
+        <p>Sem imagem disponível</p>
+      {% endif %}
+    </div>
+
+    <!-- Informações -->
+    <div class="col-md-6">
+
+      <h2>{{ carro.nome }}</h2>
+
+      <p class="text-muted">{{ carro.marca|title }}</p>
+
+      <h3 class="text-success mt-3">
+        R$ {{ carro.preco|localize }}
+      </h3>
+
+      <hr>
+
+      <p><strong>Ano:</strong> {{ carro.ano|default:"Não informado" }}</p>
+      <p><strong>Potência:</strong> {{ carro.potencia|default:"-" }} cv</p>
+      <p><strong>Consumo:</strong> {{ carro.consumo|default:"-" }} km/l</p>
+      <p><strong>Combustível:</strong> {{ carro.combustivel|default:"-" }}</p>
+
+      <!-- 🔥 Categoria com cor dinâmica -->
+      <p>
+        <strong>Categoria:</strong> 
+        {% if carro.categoria %}
+          <span class="badge
+            {% if carro.categoria == 'SUV' %}badge-suv
+            {% elif carro.categoria == 'SEDAN' %}badge-sedan
+            {% elif carro.categoria == 'HATCH' %}badge-hatch
+            {% elif carro.categoria == 'PICAPE' %}badge-picape
+            {% elif carro.categoria == 'ESPORTE' %}badge-esporte
+            {% endif %}
+          ">
+            {{ carro.categoria|title }}
+          </span>
+        {% else %}
+          -
+        {% endif %}
+      </p>
+
+      <hr>
+
+      <p><strong>Descrição:</strong></p>
+      <p>{{ carro.descricao|default:"Sem descrição disponível." }}</p>
+
+      <hr>
+      <p><strong>Score (custo-benefício):</strong> {{ carro.score|floatformat:2 }}</p>
+      <a href="/" class="btn btn-secondary mt-3">
+        ← Voltar
+      </a>
+
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %}

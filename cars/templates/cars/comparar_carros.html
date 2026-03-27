@@ -1,0 +1,85 @@
+{% extends 'cars/base.html' %}
+{% load l10n %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+  <h2 class="mb-4">Comparação de Carros</h2>
+
+  {% if carros %}
+    <div class="row">
+
+      {% for carro in carros %}
+        <div class="col-md-4 mb-4">
+          <div class="card custom-card h-100
+            {% if carro.preco == min_price %} best-price {% endif %}
+          ">
+
+            <!-- 🔥 IMAGEM NO TOPO -->
+            {% if carro.imagem %}
+              <img src="{{ carro.imagem.url }}" class="card-img-top">
+            {% endif %}
+
+            <div class="card-body text-center">
+
+              <h5 class="card-title">{{ carro.nome }}</h5>
+
+              <!-- Melhor preço -->
+              {% if carro.preco == min_price %}
+                <span class="badge bg-success mb-2">🏆 Melhor preço</span>
+              {% endif %}
+
+              <p><strong>Marca:</strong> {{ carro.marca|title }}</p>
+
+              <!-- Categoria com cor dinâmica -->
+              {% if carro.categoria %}
+                <p>
+                  <span class="badge
+                    {% if carro.categoria == 'SUV' %}badge-suv
+                    {% elif carro.categoria == 'SEDAN' %}badge-sedan
+                    {% elif carro.categoria == 'HATCH' %}badge-hatch
+                    {% elif carro.categoria == 'PICAPE' %}badge-picape
+                    {% elif carro.categoria == 'ESPORTE' %}badge-esporte
+                    {% endif %}
+                  ">
+                    {{ carro.categoria|title }}
+                  </span>
+                </p>
+              {% endif %}
+
+              <p><strong>Ano:</strong> {{ carro.ano|default:"-"|unlocalize }}</p>
+              <p><strong>Potência:</strong> {{ carro.potencia|default:"-" }} cv</p>
+              <p><strong>Consumo:</strong> {{ carro.consumo|default:"-" }} km/l</p>
+              <p><strong>Combustível:</strong> {{ carro.combustivel|default:"-" }}</p>
+
+              <!-- Preço -->
+              <p class="text-success fw-bold fs-5">
+                R$ {{ carro.preco|localize }}
+              </p>
+
+              <!-- 🔥 Score -->
+              <p><strong>Score:</strong> {{ carro.score|floatformat:2 }}
+                {% if carro.id == melhor_carro.id %}
+                  <span class="badge bg-success">🏆 Melhor Score</span>
+                {% endif %}
+              </p>
+
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+
+    </div>
+
+  {% else %}
+    <div class="alert alert-warning text-center">
+      ⚠️ Selecione pelo menos 2 carros para comparar.
+    </div>
+  {% endif %}
+
+  <a href="/" class="btn btn-secondary mt-3">← Voltar</a>
+
+</div>
+
+{% endblock %}

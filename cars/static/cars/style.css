@@ -1,0 +1,509 @@
+/* =======================
+   🎨 VARIÁVEIS (TEMA)
+======================= */
+:root {
+  --bg-main: #f8f9fa;
+  --bg-card: #ffffff;
+
+  --text-main: #212529;
+  --text-muted: #6c757d;
+
+  --primary: #1f6feb;
+  --primary-hover: #155acb;
+
+  --accent: #ff4d4f;
+  --success: #28a745;
+
+  --border: #dee2e6;
+
+  --radius: 12px;
+
+  /* animação suave padrão */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+/* =======================
+   🌍 BASE
+======================= */
+body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  transition: all 0.3s var(--ease);
+}
+
+h2 {
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+
+/* =======================
+   🔗 LINKS
+======================= */
+a {
+  color: var(--text-main);
+  text-decoration: none;
+  transition: all 0.2s var(--ease);
+}
+
+a:hover {
+  color: var(--primary);
+}
+
+
+/* =======================
+   📝 TEXTOS
+======================= */
+p, small, strong {
+  color: var(--text-main);
+}
+
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+
+/* =======================
+   🧩 CARDS
+======================= */
+.custom-card {
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+
+  transition: all 0.3s var(--ease);
+
+  /* animação inicial */
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.5s var(--ease) forwards;
+}
+
+
+.custom-card .card-body {
+  padding: 1.2rem;
+}
+
+/* entrada em sequência */
+.custom-card:nth-child(1) { animation-delay: 0.1s; }
+.custom-card:nth-child(2) { animation-delay: 0.2s; }
+.custom-card:nth-child(3) { animation-delay: 0.3s; }
+.custom-card:nth-child(4) { animation-delay: 0.4s; }
+
+
+/* imagem com zoom suave */
+.card-img-top {
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.4s var(--ease);
+}
+
+.custom-card:hover .card-img-top {
+  transform: scale(1.07);
+}
+
+
+/* =======================
+   🏷️ TÍTULOS
+======================= */
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.card-title a:hover {
+  color: var(--primary);
+}
+
+
+/* =======================
+   🔘 BOTÕES
+======================= */
+.btn-primary {
+  background-color: var(--primary);
+  border: none;
+  font-weight: 500;
+  transition: all 0.2s var(--ease);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+.btn-primary:active {
+  transform: scale(0.96);
+}
+
+/* botão comparar */
+#btn-comparar {
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s var(--ease);
+}
+
+#btn-comparar:hover {
+  transform: scale(1.05);
+}
+
+#btn-comparar:active {
+  transform: scale(0.95);
+}
+
+/* botão tema */
+.btn-outline-secondary {
+  border-color: var(--border);
+  color: var(--text-main);
+}
+
+.btn-outline-secondary:hover {
+  background-color: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+/* botão secondary */
+.btn-secondary {
+  background-color: var(--border);
+  border: none;
+  color: var(--text-main);
+}
+
+.btn-secondary:hover {
+  background-color: var(--text-muted);
+  color: white;
+}
+
+
+/* =======================
+   🏆 DESTAQUES
+======================= */
+.best-price {
+  border: 2px solid var(--success) !important;
+}
+
+.best-score {
+  color: var(--accent);
+  font-weight: bold;
+}
+
+
+/* =======================
+   🏷️ BADGES
+======================= */
+.badge {
+  font-size: 0.7rem;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.badge-suv { background-color: #0d6efd; }
+.badge-sedan { background-color: #6f42c1; }
+.badge-hatch { background-color: #20c997; }
+.badge-picape { background-color: #fd7e14; }
+.badge-esporte { background-color: #dc3545; }
+
+
+/* =======================
+   🔝 NAVBAR
+======================= */
+.navbar {
+  background-color: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+}
+
+.navbar-brand {
+  color: var(--text-main);
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+.navbar-brand:hover {
+  color: var(--primary);
+}
+
+.nav-link {
+  color: var(--text-main) !important;
+  font-weight: 500;
+  position: relative;
+  transition: all 0.2s var(--ease);
+}
+
+.nav-link:hover {
+  color: var(--primary) !important;
+}
+
+/* linha animada */
+.nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: var(--primary);
+  transition: 0.3s;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+
+/* =======================
+   📦 FORMULÁRIOS
+======================= */
+.form-control,
+.form-select {
+  background-color: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  transition: all 0.2s var(--ease);
+}
+
+.form-control::placeholder {
+  color: var(--text-muted);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(31,111,235,0.15);
+}
+
+
+/* =======================
+   📊 PAGINAÇÃO
+======================= */
+.btn-outline-primary {
+  border-radius: 8px;
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
+
+/* =======================
+   🌙 DARK MODE
+======================= */
+.dark-mode {
+  --bg-main: #0d1117;
+  --bg-card: #161b22;
+
+  --text-main: #e6edf3;
+  --text-muted: #8b949e;
+
+  --primary: #2f81f7;
+  --primary-hover: #1f6feb;
+
+  --accent: #ff6b6b;
+  --success: #2ea043;
+
+  --border: #30363d;
+}
+
+.dark-mode .custom-card {
+  background: rgba(22, 27, 34, 0.85);
+}
+
+.dark-mode .form-control,
+.dark-mode .form-select {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+
+/* =======================
+   ✨ ANIMAÇÕES
+======================= */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* =======================
+   ⚡ SKELETON LOADING
+======================= */
+.skeleton {
+  border-radius: 10px;
+  background: linear-gradient(
+    90deg,
+    #eee 25%,
+    #ddd 37%,
+    #eee 63%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+.card-selected {
+  border: 2px solid var(--primary);
+  box-shadow: 0 0 0 3px rgba(31,111,235,0.2);
+}
+
+.custom-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+}
+.form-check-input:checked {
+  transform: scale(1.2);
+  transition: transform 0.2s ease;
+}
+.pulse {
+  animation: pulseAnim 0.3s;
+}
+
+@keyframes pulseAnim {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.dark-mode .card-title,
+.dark-mode .card-title a {
+  color: var(--text-main) !important;
+}
+
+.dark-mode .custom-card,
+.dark-mode .custom-card p,
+.dark-mode .custom-card small,
+.dark-mode .custom-card strong {
+  color: var(--text-main);
+}
+
+.custom-card {
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.custom-card:hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.15),
+    transparent
+  );
+
+  opacity: 0.4;
+
+  pointer-events: none;
+  z-index: 1;
+}
+
+.btn-favorite {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  background: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.btn-favorite:hover {
+  transform: scale(1.1);
+}
+
+.btn-favorite:active {
+  transform: scale(0.9);
+}
+
+.dark-mode .btn-favorite {
+  background: var(--bg-card);
+}
+
+.custom-card > *:not(.favorite-btn) {
+  position: relative;
+  z-index: 2;
+}
+
+.img-container {
+  position: relative;
+}
+.favorite-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  width: 40px;
+  height: 40px;
+
+  border-radius: 50%;
+  border: none;
+
+  background: rgba(0,0,0,0.6);
+  color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 18px;
+  cursor: pointer;
+
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+
+.favorite-btn:hover {
+  transform: scale(1.1);
+}
+
+.favorite-btn.active {
+  background: red;
+}
+
+.custom-card {
+  position: relative;
+}
+
+.card-img-top {
+  display: block;
+}

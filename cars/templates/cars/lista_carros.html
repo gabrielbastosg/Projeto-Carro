@@ -1,0 +1,303 @@
+{% extends 'cars/base.html' %}
+{% load l10n %}
+
+{% block title %}Lista de Carros{% endblock %}
+
+{% block content %}
+
+<h2 class="mb-4">🚗 Carros</h2>
+
+<!-- 🔎 FILTRO -->
+<form method="GET" class="mb-4 p-3 rounded shadow-sm filter-box">
+  <div class="row g-2 align-items-end">
+
+    <div class="col-md-3">
+      <label class="small text-muted">Buscar</label>
+      <input 
+        type="text" 
+        name="q" 
+        class="form-control"
+        placeholder="Ex: Corolla, Civic..."
+        value="{{ query|default:'' }}"
+      >
+    </div>
+
+    <div class="col-md-2">
+      <label class="small text-muted">Marca</label>
+      <select name="marca" class="form-select">
+        <option value="">Todas</option>
+        {% for m in marcas %}
+          <option value="{{ m }}" {% if m == marca_selecionada %}selected{% endif %}>
+            {{ m }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-2">
+      <label class="small text-muted">Categoria</label>
+      <select name="categoria" class="form-select">
+        <option value="">Todas</option>
+        <option value="SUV" {% if categoria_selecionada == "SUV" %}selected{% endif %}>SUV</option>
+        <option value="SEDAN" {% if categoria_selecionada == "SEDAN" %}selected{% endif %}>Sedan</option>
+        <option value="HATCH" {% if categoria_selecionada == "HATCH" %}selected{% endif %}>Hatch</option>
+        <option value="PICAPE" {% if categoria_selecionada == "PICAPE" %}selected{% endif %}>Picape</option>
+        <option value="ESPORTE" {% if categoria_selecionada == "ESPORTE" %}selected{% endif %}>Esportivo</option>
+      </select>
+    </div>
+
+    <div class="col-md-2">
+      <label class="small text-muted">Ordenar</label>
+      <select name="ordem" class="form-select">
+        <option value="">Padrão</option>
+        <option value="menor" {% if ordem == 'menor' %}selected{% endif %}>Menor preço</option>
+        <option value="maior" {% if ordem == 'maior' %}selected{% endif %}>Maior preço</option>
+      </select>
+    </div>
+
+    <div class="col-md-2 d-grid">
+      <button type="submit" class="btn btn-primary">Filtrar</button>
+    </div>
+
+    <div class="col-md-1 d-grid">
+      <a href="{% url 'lista_carros' %}" class="btn btn-outline-secondary">✖</a>
+    </div>
+
+  </div>
+</form>
+
+
+<!-- ⚖️ COMPARAÇÃO -->
+<form method="GET" action="/comparar/" id="form-comparar">
+
+  <div class="row">
+    {% for carro in carros %}
+      <div class="col-md-4 mb-4">
+
+        <div class="card custom-card h-100">
+          
+          <div class="img-container">
+            {% if carro.imagem %}
+              <img src="{{ carro.imagem.url }}" class="card-img-top">
+            {% endif %}
+
+            <button type="button" class="favorite-btn" data-id="{{ carro.id }}">
+              ❤️
+            </button>
+          </div>
+
+          <div class="card-body d-flex flex-column">
+
+            <!-- HEADER -->
+            <div class="d-flex justify-content-between align-items-start mb-2">
+
+              <div>
+                <h5 class="card-title mb-0">
+                  <a href="{% url 'detalhe_carro' carro.id %}">
+                    {{ carro.nome }}
+                  </a>
+                </h5>
+                <small class="text-muted">{{ carro.marca|title }}</small>
+              </div>
+
+              <div class="form-check">
+                <input class="form-check-input car-checkbox" type="checkbox" value="{{ carro.id }}">
+              </div>
+
+            </div>
+
+            <!-- BADGE -->
+            {% if carro.categoria %}
+              <span class="badge mb-2
+                {% if carro.categoria == 'SUV' %}badge-suv
+                {% elif carro.categoria == 'SEDAN' %}badge-sedan
+                {% elif carro.categoria == 'HATCH' %}badge-hatch
+                {% elif carro.categoria == 'PICAPE' %}badge-picape
+                {% elif carro.categoria == 'ESPORTE' %}badge-esporte
+                {% endif %}
+              ">
+                {{ carro.categoria|title }}
+              </span>
+            {% endif %}
+
+            <!-- INFO -->
+            <div class="mb-2 small text-muted">
+              ⛽ {{ carro.combustivel|default:"-" }}
+            </div>
+
+            <!-- PREÇO -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-success fw-bold fs-5">
+              💰 R$ {{ carro.preco|localize }}
+            </span>
+
+            <!-- SCORE -->
+            <span class="best-score">
+              🔥 {{ carro.score|floatformat:2 }}
+            </span>
+          </div>
+
+            <!-- BOTÃO -->
+            <a href="{% url 'detalhe_carro' carro.id %}" class="btn btn-primary mt-auto">
+              Ver detalhes
+            </a>
+
+          </div>
+        </div>
+
+      </div>
+    {% empty %}
+      <p>Nenhum carro encontrado.</p>
+    {% endfor %}
+  </div>
+
+  <!-- CONTADOR -->
+  <p id="contador-selecao" class="mt-2 text-muted">
+    0 carro(s) selecionado(s)
+  </p>
+
+  <!-- BOTÃO -->
+  <button type="submit" id="btn-comparar" class="btn btn-success">
+    Comparar
+  </button>
+
+</form>
+
+
+<!-- PAGINAÇÃO -->
+<div class="d-flex justify-content-center mt-4">
+
+  {% if carros.has_previous %}
+    <a href="?page={{ carros.previous_page_number }}&q={{ query }}&marca={{ marca_selecionada }}&categoria={{ categoria_selecionada }}&ordem={{ ordem }}" 
+       class="btn btn-outline-primary me-2">
+      ← Anterior
+    </a>
+  {% endif %}
+
+  <span class="align-self-center">
+    Página {{ carros.number }} de {{ carros.paginator.num_pages }}
+  </span>
+
+  {% if carros.has_next %}
+    <a href="?page={{ carros.next_page_number }}&q={{ query }}&marca={{ marca_selecionada }}&categoria={{ categoria_selecionada }}&ordem={{ ordem }}" 
+       class="btn btn-outline-primary ms-2">
+      Próxima →
+    </a>
+  {% endif %}
+
+</div>
+
+
+<!-- SCRIPT -->
+<script>
+  const checkboxes = document.querySelectorAll('.car-checkbox');
+  const botaoComparar = document.getElementById('btn-comparar');
+  const contador = document.getElementById('contador-selecao');
+  const formComparar = document.getElementById('form-comparar');
+
+  let selecionados = JSON.parse(localStorage.getItem('carrosSelecionados')) || [];
+
+  checkboxes.forEach(cb => {
+    const card = cb.closest('.custom-card'); // 🔥 pega o card
+
+    if (selecionados.includes(cb.value)) {
+      cb.checked = true;
+      if (card) card.classList.add('card-selected'); // 🔥 mantém selecionado ao recarregar
+    }
+
+    cb.addEventListener('change', () => {
+      if (cb.checked) {
+        if (!selecionados.includes(cb.value)) {
+          selecionados.push(cb.value);
+        }
+        if (card) card.classList.add('card-selected'); // 🔥 destaque visual
+      } else {
+        selecionados = selecionados.filter(id => id !== cb.value);
+        if (card) card.classList.remove('card-selected');
+      }
+
+      localStorage.setItem('carrosSelecionados', JSON.stringify(selecionados));
+      atualizarUI();
+    });
+  });
+
+  function atualizarUI() {
+    contador.textContent = selecionados.length + " carro(s) selecionado(s)";
+
+    if (selecionados.length < 2) {
+      botaoComparar.disabled = true;
+      botaoComparar.textContent = "Selecione pelo menos 2";
+    } else {
+      botaoComparar.disabled = false;
+      botaoComparar.textContent = "Comparar (" + selecionados.length + ")";
+    }
+
+    // 🔥 animação no botão
+    botaoComparar.classList.add('pulse');
+    setTimeout(() => {
+      botaoComparar.classList.remove('pulse');
+    }, 300);
+  }
+
+  atualizarUI();
+
+  if (formComparar) {
+    formComparar.addEventListener('submit', function() {
+      document.querySelectorAll('.hidden-input').forEach(el => el.remove());
+
+      selecionados.forEach(id => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'carros';
+        input.value = id;
+        input.classList.add('hidden-input');
+        this.appendChild(input);
+      });
+
+      localStorage.removeItem('carrosSelecionados');
+    });
+  }
+const favoriteButtons = document.querySelectorAll('.favorite-btn');
+
+favoriteButtons.forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();        // 🔥 evita submit
+    e.stopPropagation();       // 🔥 evita ativar card/form
+
+    const carId = btn.dataset.id;
+
+    fetch(`/favorito/${carId}/`, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': getCookie('csrftoken'),
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.favorited) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  });
+});
+
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+      cookie = cookie.trim();
+      if (cookie.startsWith(name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+</script>
+
+{% endblock %}
