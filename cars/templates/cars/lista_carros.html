@@ -67,96 +67,91 @@
 </form>
 
 
-<!-- ⚖️ COMPARAÇÃO -->
-<form method="GET" action="/comparar/" id="form-comparar">
+<!-- 🚗 LISTA (FORA DO FORM) -->
+<div class="row">
+  {% for carro in carros %}
+    <div class="col-md-4 mb-4">
 
-  <div class="row">
-    {% for carro in carros %}
-      <div class="col-md-4 mb-4">
+      <div class="card custom-card h-100">
 
-        <div class="card custom-card h-100">
-          
-          <div class="img-container">
-            {% if carro.imagem %}
-              <img src="{{ carro.imagem.url }}" class="card-img-top">
-            {% endif %}
+        <!-- ❤️ FAVORITO -->
+        <div class="img-container">
+          {% if carro.imagem %}
+            <img src="{{ carro.imagem.url }}" class="card-img-top">
+          {% endif %}
 
-            <button type="button" class="favorite-btn" data-id="{{ carro.id }}">
-              ❤️
-            </button>
+          <button type="button" class="favorite-btn" data-id="{{ carro.id }}">
+            ❤️
+          </button>
+        </div>
+
+        <div class="card-body d-flex flex-column">
+
+          <div class="d-flex justify-content-between align-items-start mb-2">
+
+            <div>
+              <h5 class="card-title mb-0">
+                <a href="{% url 'detalhe_carro' carro.id %}">
+                  {{ carro.nome }}
+                </a>
+              </h5>
+              <small class="text-muted">{{ carro.marca|title }}</small>
+            </div>
+
+            <div class="form-check">
+              <input class="form-check-input car-checkbox" type="checkbox" value="{{ carro.id }}">
+            </div>
+
           </div>
 
-          <div class="card-body d-flex flex-column">
+          {% if carro.categoria %}
+            <span class="badge mb-2
+              {% if carro.categoria == 'SUV' %}badge-suv
+              {% elif carro.categoria == 'SEDAN' %}badge-sedan
+              {% elif carro.categoria == 'HATCH' %}badge-hatch
+              {% elif carro.categoria == 'PICAPE' %}badge-picape
+              {% elif carro.categoria == 'ESPORTE' %}badge-esporte
+              {% endif %}
+            ">
+              {{ carro.categoria|title }}
+            </span>
+          {% endif %}
 
-            <!-- HEADER -->
-            <div class="d-flex justify-content-between align-items-start mb-2">
+          <div class="mb-2 small text-muted">
+            ⛽ {{ carro.combustivel|default:"-" }}
+          </div>
 
-              <div>
-                <h5 class="card-title mb-0">
-                  <a href="{% url 'detalhe_carro' carro.id %}">
-                    {{ carro.nome }}
-                  </a>
-                </h5>
-                <small class="text-muted">{{ carro.marca|title }}</small>
-              </div>
-
-              <div class="form-check">
-                <input class="form-check-input car-checkbox" type="checkbox" value="{{ carro.id }}">
-              </div>
-
-            </div>
-
-            <!-- BADGE -->
-            {% if carro.categoria %}
-              <span class="badge mb-2
-                {% if carro.categoria == 'SUV' %}badge-suv
-                {% elif carro.categoria == 'SEDAN' %}badge-sedan
-                {% elif carro.categoria == 'HATCH' %}badge-hatch
-                {% elif carro.categoria == 'PICAPE' %}badge-picape
-                {% elif carro.categoria == 'ESPORTE' %}badge-esporte
-                {% endif %}
-              ">
-                {{ carro.categoria|title }}
-              </span>
-            {% endif %}
-
-            <!-- INFO -->
-            <div class="mb-2 small text-muted">
-              ⛽ {{ carro.combustivel|default:"-" }}
-            </div>
-
-            <!-- PREÇO -->
-            <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-3">
             <span class="text-success fw-bold fs-5">
               💰 R$ {{ carro.preco|localize }}
             </span>
 
-            <!-- SCORE -->
             <span class="best-score">
               🔥 {{ carro.score|floatformat:2 }}
             </span>
           </div>
 
-            <!-- BOTÃO -->
-            <a href="{% url 'detalhe_carro' carro.id %}" class="btn btn-primary mt-auto">
-              Ver detalhes
-            </a>
+          <a href="{% url 'detalhe_carro' carro.id %}" class="btn btn-primary mt-auto">
+            Ver detalhes
+          </a>
 
-          </div>
         </div>
-
       </div>
-    {% empty %}
-      <p>Nenhum carro encontrado.</p>
-    {% endfor %}
-  </div>
 
-  <!-- CONTADOR -->
+    </div>
+  {% empty %}
+    <p>Nenhum carro encontrado.</p>
+  {% endfor %}
+</div>
+
+
+<!-- ⚖️ FORM COMPARAR (AGORA SEPARADO) -->
+<form method="GET" action="/comparar/" id="form-comparar">
+
   <p id="contador-selecao" class="mt-2 text-muted">
     0 carro(s) selecionado(s)
   </p>
 
-  <!-- BOTÃO -->
   <button type="submit" id="btn-comparar" class="btn btn-success">
     Comparar
   </button>
