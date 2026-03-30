@@ -7,5 +7,5 @@ urlpatterns = [
     path('carro/<int:id>/',detalhe_carro,name ='detalhe_carro'),
     path('comparar/', comparar_carros, name='comparar_carros'),
     path('favorito/<int:car_id>/', views.toggle_favorite, name='toggle_favorite'),
-    path('favoritos/', views.lista_favoritos, name='favoritos'),
+    path('favoritos/', views.lista_favoritos, name='lista_favoritos'),
 ]

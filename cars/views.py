@@ -13,7 +13,10 @@ def lista_carros(request):
     ordem = request.GET.get('ordem', '')
     page = request.GET.get('page')
 
-    carros = Car.objects.all().order_by('id')
+    carros = Car.objects.all().only(
+        'id', 'nome', 'marca', 'preco', 'imagem', 
+        'categoria', 'combustivel', 'potencia', 'consumo'
+    ).order_by('id')
 
     # filtro por nome
     if query:
@@ -32,10 +35,23 @@ def lista_carros(request):
         carros = carros.order_by('preco')
     elif ordem == 'maior':
         carros = carros.order_by('-preco')
+    elif ordem == 'score':
+        carros = sorted(carros, key=lambda c: c.score, reverse=True)
+    
+    # Numero de favoritos
+    favoritos_count = 0
+
+    if request.user.is_authenticated:
+        favoritos_count = Favorite.objects.filter(user=request.user).count()
 
     # paginação
     paginator = Paginator(carros, 6)
     carros_paginados = paginator.get_page(page)
+
+    melhor_carro = None
+
+    if carros_paginados:
+        melhor_carro = max(carros_paginados, key=lambda c: c.score)
 
     marcas = Car.objects.values_list('marca', flat=True).distinct()
 
@@ -45,7 +61,8 @@ def lista_carros(request):
         'query': query,
         'marca_selecionada': marca,
         'ordem': ordem,
-        'categoria_selecionada': categoria  
+        'categoria_selecionada': categoria ,
+        'melhor_carro': melhor_carro, 
     }
 
     return render(request, 'cars/lista_carros.html', context)

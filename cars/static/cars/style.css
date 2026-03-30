@@ -486,3 +486,17 @@ button:disabled {
   pointer-events: none;
   z-index: 1;
 }
+.score-high {
+  color: #00c853;
+  font-weight: bold;
+}
+
+.score-medium {
+  color: #ffab00;
+  font-weight: bold;
+}
+
+.score-low {
+  color: #d32f2f;
+  font-weight: bold;
+}

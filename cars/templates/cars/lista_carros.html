@@ -52,6 +52,7 @@
         <option value="">Padrão</option>
         <option value="menor" {% if ordem == 'menor' %}selected{% endif %}>Menor preço</option>
         <option value="maior" {% if ordem == 'maior' %}selected{% endif %}>Maior preço</option>
+        <option value="score" {% if ordem == 'score' %}selected{% endif %}>Melhor score</option>
       </select>
     </div>
 
@@ -95,6 +96,9 @@
                   {{ carro.nome }}
                 </a>
               </h5>
+              {% if melhor_carro and carro.id == melhor_carro.id %}
+                <span class="badge bg-success mb-2 d-inline-block">🏆 Melhor opção</span>
+              {% endif %}
               <small class="text-muted">{{ carro.marca|title }}</small>
             </div>
 
@@ -126,7 +130,12 @@
               💰 R$ {{ carro.preco|localize }}
             </span>
 
-            <span class="best-score">
+            <span class="best-score 
+              {% if carro.score > 3 %}score-high
+              {% elif carro.score > 1.5 %}score-medium
+              {% else %}score-low
+              {% endif %}
+            ">
               🔥 {{ carro.score|floatformat:2 }}
             </span>
           </div>

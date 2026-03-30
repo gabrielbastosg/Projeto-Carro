@@ -39,12 +39,19 @@ class Car(models.Model):
     @property
     def score(self):
         try:
-            return (self.potencia / (self.consumo * float(self.preco))) * 10000
-        except (TypeError, ZeroDivisionError):
-            return 0
+            potencia = float(self.potencia or 0)
+            consumo = float(self.consumo or 0)
+            preco = float(self.preco or 0)
 
-    def __str__(self):
-        return self.nome
+            if consumo == 0 or preco == 0:
+                return 0
+
+            score = (potencia / (consumo * preco)) * 10000
+
+            return round(score,2)
+            
+        except (TypeError, ValueError, ZeroDivisionError):
+            return 0
 
 
 # =======================
