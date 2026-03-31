@@ -4,12 +4,16 @@ from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404,redirect
+from django.contrib.auth.forms import UserCreationForm
+import os
+import requests
+
 # Create your views here.
 
 def lista_carros(request):
     query = request.GET.get('q', '')
     marca = request.GET.get('marca', '')
-    categoria = request.GET.get('categoria', '')  # 🔥 AQUI
+    categoria = request.GET.get('categoria', '')  
     ordem = request.GET.get('ordem', '')
     page = request.GET.get('page')
 
@@ -117,3 +121,66 @@ def lista_favoritos(request):
     return render(request, 'cars/favoritos.html', {
         'carros': carros
     })
+
+def signup(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = UserCreationForm()
+
+    return render(request, 'registration/signup.html', {'form': form})
+
+
+def buscar_carros_api(request):
+    """
+    Retorna carros de exemplo (fake) para testes, sem depender da API externa.
+    """
+    make = request.GET.get("make", "")
+
+    # Lista de carros fake
+    carros_fake = [
+        {
+            "make": "Toyota",
+            "model": "Corolla",
+            "year": 2022,
+            "fuel_type": "Gasolina",
+            "image_url": "/static/cars/default_car.png"
+        },
+        {
+            "make": "Honda",
+            "model": "Civic",
+            "year": 2021,
+            "fuel_type": "Flex",
+            "image_url": "/static/cars/default_car.png"
+        },
+        {
+            "make": "Ford",
+            "model": "EcoSport",
+            "year": 2023,
+            "fuel_type": "Diesel",
+            "image_url": "/static/cars/default_car.png"
+        },
+        {
+            "make": "Chevrolet",
+            "model": "Onix",
+            "year": 2022,
+            "fuel_type": "Flex",
+            "image_url": "/static/cars/default_car.png"
+        },
+        {
+            "make": "Fiat",
+            "model": "Argo",
+            "year": 2021,
+            "fuel_type": "Flex",
+            "image_url": "/static/cars/default_car.png"
+        },
+    ]
+
+    # Filtra pelo make se estiver definido
+    if make:
+        carros_fake = [c for c in carros_fake if c["make"].lower() == make.lower()]
+
+    return JsonResponse(carros_fake, safe=False)

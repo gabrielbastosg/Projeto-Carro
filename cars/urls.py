@@ -1,6 +1,8 @@
 from django.urls import path
 from .views import lista_carros,detalhe_carro,comparar_carros,toggle_favorite
 from . import views
+from .views import signup
+from .views import buscar_carros_api
 
 urlpatterns = [
     path('', lista_carros, name='lista_carros'),
@@ -8,4 +10,6 @@ urlpatterns = [
     path('comparar/', comparar_carros, name='comparar_carros'),
     path('favorito/<int:car_id>/', views.toggle_favorite, name='toggle_favorite'),
     path('favoritos/', views.lista_favoritos, name='lista_favoritos'),
+    path('signup/', signup, name='signup'),
+    path('api/carros/', buscar_carros_api, name='buscar_carros_api'),
 ]

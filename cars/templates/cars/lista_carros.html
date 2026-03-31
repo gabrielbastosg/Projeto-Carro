@@ -1,11 +1,14 @@
 {% extends 'cars/base.html' %}
 {% load l10n %}
-
+{% load static %}
 {% block title %}Lista de Carros{% endblock %}
 
 {% block content %}
 
-<h2 class="mb-4">🚗 Carros</h2>
+<h2 class="mb-4 d-flex align-items-center gap-2">
+  <img src="{% static 'cars/logo.png' %}" alt="Ícone" class="icon-title">
+  Carros
+</h2>
 
 <!-- 🔎 FILTRO -->
 <form method="GET" class="mb-4 p-3 rounded shadow-sm filter-box">
@@ -67,12 +70,20 @@
   </div>
 </form>
 
+<!-- 🔎 BOTÃO API -->
+<div class="mb-3">
+  <button id="btn-api" class="btn btn-dark">
+    🔎 Buscar carros externos
+  </button>
+    <span id="api-aviso" class="text-muted small">⚠️ Em desenvolvimento / manutenção</span>
+</div>
+
+<div id="api-resultados" class="row mb-4"></div>
 
 <!-- 🚗 LISTA (FORA DO FORM) -->
 <div class="row">
   {% for carro in carros %}
     <div class="col-md-4 mb-4">
-
       <div class="card custom-card h-100">
 
         <!-- ❤️ FAVORITO -->
@@ -89,7 +100,6 @@
         <div class="card-body d-flex flex-column">
 
           <div class="d-flex justify-content-between align-items-start mb-2">
-
             <div>
               <h5 class="card-title mb-0">
                 <a href="{% url 'detalhe_carro' carro.id %}">
@@ -105,7 +115,6 @@
             <div class="form-check">
               <input class="form-check-input car-checkbox" type="checkbox" value="{{ carro.id }}">
             </div>
-
           </div>
 
           {% if carro.categoria %}
@@ -115,8 +124,7 @@
               {% elif carro.categoria == 'HATCH' %}badge-hatch
               {% elif carro.categoria == 'PICAPE' %}badge-picape
               {% elif carro.categoria == 'ESPORTE' %}badge-esporte
-              {% endif %}
-            ">
+              {% endif %}">
               {{ carro.categoria|title }}
             </span>
           {% endif %}
@@ -134,8 +142,7 @@
               {% if carro.score > 3 %}score-high
               {% elif carro.score > 1.5 %}score-medium
               {% else %}score-low
-              {% endif %}
-            ">
+              {% endif %}">
               🔥 {{ carro.score|floatformat:2 }}
             </span>
           </div>
@@ -143,34 +150,26 @@
           <a href="{% url 'detalhe_carro' carro.id %}" class="btn btn-primary mt-auto">
             Ver detalhes
           </a>
-
         </div>
       </div>
-
     </div>
   {% empty %}
     <p>Nenhum carro encontrado.</p>
   {% endfor %}
 </div>
 
-
-<!-- ⚖️ FORM COMPARAR (AGORA SEPARADO) -->
+<!-- ⚖️ FORM COMPARAR -->
 <form method="GET" action="/comparar/" id="form-comparar">
-
   <p id="contador-selecao" class="mt-2 text-muted">
     0 carro(s) selecionado(s)
   </p>
-
   <button type="submit" id="btn-comparar" class="btn btn-success">
     Comparar
   </button>
-
 </form>
-
 
 <!-- PAGINAÇÃO -->
 <div class="d-flex justify-content-center mt-4">
-
   {% if carros.has_previous %}
     <a href="?page={{ carros.previous_page_number }}&q={{ query }}&marca={{ marca_selecionada }}&categoria={{ categoria_selecionada }}&ordem={{ ordem }}" 
        class="btn btn-outline-primary me-2">
@@ -185,105 +184,83 @@
   {% if carros.has_next %}
     <a href="?page={{ carros.next_page_number }}&q={{ query }}&marca={{ marca_selecionada }}&categoria={{ categoria_selecionada }}&ordem={{ ordem }}" 
        class="btn btn-outline-primary ms-2">
-      Próxima →
+      Próxima → 
     </a>
   {% endif %}
-
 </div>
-
 
 <!-- SCRIPT -->
 <script>
-  const checkboxes = document.querySelectorAll('.car-checkbox');
-  const botaoComparar = document.getElementById('btn-comparar');
-  const contador = document.getElementById('contador-selecao');
-  const formComparar = document.getElementById('form-comparar');
+const checkboxes = document.querySelectorAll('.car-checkbox');
+const botaoComparar = document.getElementById('btn-comparar');
+const contador = document.getElementById('contador-selecao');
+const formComparar = document.getElementById('form-comparar');
 
-  let selecionados = JSON.parse(localStorage.getItem('carrosSelecionados')) || [];
+let selecionados = JSON.parse(localStorage.getItem('carrosSelecionados')) || [];
 
-  checkboxes.forEach(cb => {
-    const card = cb.closest('.custom-card'); // 🔥 pega o card
-
-    if (selecionados.includes(cb.value)) {
-      cb.checked = true;
-      if (card) card.classList.add('card-selected'); // 🔥 mantém selecionado ao recarregar
-    }
-
-    cb.addEventListener('change', () => {
-      if (cb.checked) {
-        if (!selecionados.includes(cb.value)) {
-          selecionados.push(cb.value);
-        }
-        if (card) card.classList.add('card-selected'); // 🔥 destaque visual
-      } else {
-        selecionados = selecionados.filter(id => id !== cb.value);
-        if (card) card.classList.remove('card-selected');
-      }
-
-      localStorage.setItem('carrosSelecionados', JSON.stringify(selecionados));
-      atualizarUI();
-    });
-  });
-
-  function atualizarUI() {
-    contador.textContent = selecionados.length + " carro(s) selecionado(s)";
-
-    if (selecionados.length < 2) {
-      botaoComparar.disabled = true;
-      botaoComparar.textContent = "Selecione pelo menos 2";
+checkboxes.forEach(cb => {
+  const card = cb.closest('.custom-card');
+  if (selecionados.includes(cb.value)) {
+    cb.checked = true;
+    if (card) card.classList.add('card-selected');
+  }
+  cb.addEventListener('change', () => {
+    if (cb.checked) {
+      if (!selecionados.includes(cb.value)) selecionados.push(cb.value);
+      if (card) card.classList.add('card-selected');
     } else {
-      botaoComparar.disabled = false;
-      botaoComparar.textContent = "Comparar (" + selecionados.length + ")";
+      selecionados = selecionados.filter(id => id !== cb.value);
+      if (card) card.classList.remove('card-selected');
     }
+    localStorage.setItem('carrosSelecionados', JSON.stringify(selecionados));
+    atualizarUI();
+  });
+});
 
-    // 🔥 animação no botão
-    botaoComparar.classList.add('pulse');
-    setTimeout(() => {
-      botaoComparar.classList.remove('pulse');
-    }, 300);
+function atualizarUI() {
+  contador.textContent = selecionados.length + " carro(s) selecionado(s)";
+  if (selecionados.length < 2) {
+    botaoComparar.disabled = true;
+    botaoComparar.textContent = "Selecione pelo menos 2";
+  } else {
+    botaoComparar.disabled = false;
+    botaoComparar.textContent = "Comparar (" + selecionados.length + ")";
   }
+  botaoComparar.classList.add('pulse');
+  setTimeout(() => botaoComparar.classList.remove('pulse'), 300);
+}
 
-  atualizarUI();
+atualizarUI();
 
-  if (formComparar) {
-    formComparar.addEventListener('submit', function() {
-      document.querySelectorAll('.hidden-input').forEach(el => el.remove());
-
-      selecionados.forEach(id => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'carros';
-        input.value = id;
-        input.classList.add('hidden-input');
-        this.appendChild(input);
-      });
-
-      localStorage.removeItem('carrosSelecionados');
+if (formComparar) {
+  formComparar.addEventListener('submit', function() {
+    document.querySelectorAll('.hidden-input').forEach(el => el.remove());
+    selecionados.forEach(id => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'carros';
+      input.value = id;
+      input.classList.add('hidden-input');
+      this.appendChild(input);
     });
-  }
-const favoriteButtons = document.querySelectorAll('.favorite-btn');
+    localStorage.removeItem('carrosSelecionados');
+  });
+}
 
+const favoriteButtons = document.querySelectorAll('.favorite-btn');
 favoriteButtons.forEach(btn => {
   btn.addEventListener('click', (e) => {
-    e.preventDefault();        // 🔥 evita submit
-    e.stopPropagation();       // 🔥 evita ativar card/form
-
+    e.preventDefault();
+    e.stopPropagation();
     const carId = btn.dataset.id;
-
     fetch(`/favorito/${carId}/`, {
       method: 'POST',
-      headers: {
-        'X-CSRFToken': getCookie('csrftoken'),
-        'Content-Type': 'application/json'
-      }
+      headers: {'X-CSRFToken': getCookie('csrftoken'),'Content-Type': 'application/json'}
     })
-    .then(response => response.json())
+    .then(res => res.json())
     .then(data => {
-      if (data.favorited) {
-        btn.classList.add('active');
-      } else {
-        btn.classList.remove('active');
-      }
+      if (data.favorited) btn.classList.add('active');
+      else btn.classList.remove('active');
     });
   });
 });
@@ -291,17 +268,67 @@ favoriteButtons.forEach(btn => {
 function getCookie(name) {
   let cookieValue = null;
   if (document.cookie && document.cookie !== '') {
-    const cookies = document.cookie.split(';');
-    for (let cookie of cookies) {
+    document.cookie.split(';').forEach(cookie => {
       cookie = cookie.trim();
-      if (cookie.startsWith(name + '=')) {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-        break;
-      }
-    }
+      if (cookie.startsWith(name + '=')) cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+    });
   }
   return cookieValue;
 }
+
+// 🔎 API externa
+const btnApi = document.getElementById('btn-api');
+const containerApi = document.getElementById('api-resultados');
+const avisoApi = document.getElementById('api-aviso');
+
+btnApi.addEventListener('click', () => {
+  containerApi.innerHTML = '<p>Carregando...</p>';
+
+  // Aqui podemos mostrar que ainda é fake / em desenvolvimento
+  avisoApi.textContent = "⚠️ Dados externos estão em manutenção";
+
+  fetch('/api/carros/?make=' + encodeURIComponent(document.querySelector('select[name="marca"]').value || ""))
+    .then(res => res.json())
+    .then(data => {
+      containerApi.innerHTML = '';
+
+      if (!data || data.length === 0) {
+        containerApi.innerHTML = '<p>Nenhum carro externo encontrado.</p>';
+        return;
+      }
+
+      data.forEach(car => {
+        const make = car.make || "-";
+        const model = car.model || "-";
+        const year = car.year || "-";
+        const fuelType = car.fuel_type || "-";
+        const imageUrl = car.image_url || "{% static 'cars/default_car.png' %}";
+
+        const cardDiv = document.createElement('div');
+        cardDiv.classList.add('col-md-4', 'mb-4');
+
+        cardDiv.innerHTML = `
+          <div class="card custom-card h-100">
+            <div class="img-container">
+              <img src="${imageUrl}" class="card-img-top" alt="${make} ${model}">
+            </div>
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">${make} ${model}</h5>
+              <div class="mb-2 small text-muted">Ano: ${year}</div>
+              <div class="mb-2 small text-muted">⛽ ${fuelType}</div>
+            </div>
+          </div>
+        `;
+
+        containerApi.appendChild(cardDiv);
+      });
+    })
+    .catch(err => {
+      containerApi.innerHTML = '<p>Erro ao carregar API 😬</p>';
+      avisoApi.textContent = "⚠️ Ainda em desenvolvimento / manutenção";
+      console.error(err);
+    });
+});
 </script>
 
 {% endblock %}
