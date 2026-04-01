@@ -39,7 +39,7 @@ Aplicação web feita com Django para explorar, comparar e favoritar carros.
 
 ```bash
 # Clonar o repositório
-git clone https://github.com/seu-usuario/seu-repo.git
+git clone https://github.com/gabrielbastosg/Projeto-Carro.git
 
 # Entrar na pasta
 cd seu-repo
