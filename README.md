@@ -16,13 +16,13 @@ Aplicação web feita com Django para explorar, comparar e favoritar carros.
 ## 📸 Screenshots
 
 ### 🔎 Lista de Carros
-![Lista de carros](./screenshots/lista.png)
+![Lista de carros](./screenshots/Lista.png)
 
 ### ❤️ Favoritos
-![Favoritos](./screenshots/favoritos.png)
+![Favoritos](./screenshots/Favoritos.png)
 
 ### 🧾 Cadastro de Usuário
-![Cadastro](./screenshots/cadastro.png)
+![Cadastro](./screenshots/Cadastro.png)
 
 ---
 
