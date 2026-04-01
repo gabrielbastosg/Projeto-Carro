@@ -277,27 +277,55 @@ function getCookie(name) {
 }
 
 // 🔎 API externa
+// 🔎 API externa
 const btnApi = document.getElementById('btn-api');
 const containerApi = document.getElementById('api-resultados');
 const avisoApi = document.getElementById('api-aviso');
 
 btnApi.addEventListener('click', () => {
-  containerApi.innerHTML = '<p>Carregando...</p>';
 
-  // Aqui podemos mostrar que ainda é fake / em desenvolvimento
-  avisoApi.textContent = "⚠️ Dados externos estão em manutenção";
+  // 🔒 Evita múltiplos cliques
+  btnApi.disabled = true;
+  btnApi.textContent = "Carregando...";
 
-  fetch('/api/carros/?make=' + encodeURIComponent(document.querySelector('select[name="marca"]').value || ""))
+  // 🧹 Limpa antes de carregar
+  containerApi.innerHTML = '';
+
+  // ⏳ Loading melhorado
+  containerApi.innerHTML = `
+    <div class="text-center">
+      <div class="spinner-border text-dark" role="status"></div>
+      <p class="mt-2">Buscando carros externos...</p>
+    </div>
+  `;
+
+  // ⚠️ Aviso mais realista
+  avisoApi.textContent = "⚠️ Dados externos podem estar limitados";
+
+  const marca = document.querySelector('select[name="marca"]').value.toLowerCase() || "toyota";
+  console.log("Marca enviada:", marca);
+
+  fetch('/api/carros/?make=' + encodeURIComponent(marca))
+
     .then(res => res.json())
     .then(data => {
       containerApi.innerHTML = '';
 
+      // 🔓 Reativa botão
+      btnApi.disabled = false;
+      btnApi.textContent = "🔎 Buscar carros externos";
+
       if (!data || data.length === 0) {
-        containerApi.innerHTML = '<p>Nenhum carro externo encontrado.</p>';
+        containerApi.innerHTML = `
+          <div class="alert alert-warning">
+            Nenhum carro externo encontrado para essa marca.
+          </div>
+        `;
         return;
       }
 
-      data.forEach(car => {
+      // ⚡ Limita resultados (performance)
+      data.slice(0, 6).forEach(car => {
         const make = car.make || "-";
         const model = car.model || "-";
         const year = car.year || "-";
@@ -308,12 +336,15 @@ btnApi.addEventListener('click', () => {
         cardDiv.classList.add('col-md-4', 'mb-4');
 
         cardDiv.innerHTML = `
-          <div class="card custom-card h-100">
+          <div class="card custom-card h-100 shadow-sm">
             <div class="img-container">
               <img src="${imageUrl}" class="card-img-top" alt="${make} ${model}">
             </div>
             <div class="card-body d-flex flex-column">
-              <h5 class="card-title">${make} ${model}</h5>
+              <h5 class="card-title">
+                ${make} ${model}
+                <span class="badge bg-secondary ms-2">Externo</span>
+              </h5>
               <div class="mb-2 small text-muted">Ano: ${year}</div>
               <div class="mb-2 small text-muted">⛽ ${fuelType}</div>
             </div>
@@ -323,10 +354,21 @@ btnApi.addEventListener('click', () => {
         containerApi.appendChild(cardDiv);
       });
     })
+
     .catch(err => {
-      containerApi.innerHTML = '<p>Erro ao carregar API 😬</p>';
-      avisoApi.textContent = "⚠️ Ainda em desenvolvimento / manutenção";
       console.error(err);
+
+      // 🔓 Reativa botão mesmo com erro
+      btnApi.disabled = false;
+      btnApi.textContent = "🔎 Buscar carros externos";
+
+      containerApi.innerHTML = `
+        <div class="alert alert-danger">
+          Erro ao carregar carros externos. Tente novamente.
+        </div>
+      `;
+
+      avisoApi.textContent = "⚠️ Ainda em desenvolvimento / manutenção";
     });
 });
 </script>

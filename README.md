@@ -1,51 +1,54 @@
-🚗 Car Explorer
+# 🚗 Car Explorer
 
-Sistema web desenvolvido com Django para explorar, comparar e analisar carros com base em custo-benefício.
+Aplicação web feita com Django para explorar, comparar e favoritar carros.
 
-🧠 Sobre o projeto
+## ✨ Funcionalidades
 
-O Car Explorer permite que usuários naveguem por uma lista de carros, filtrem por diferentes critérios e comparem veículos para encontrar a melhor opção com base em desempenho, consumo e preço.
+- 🔎 Filtro de carros por nome, marca e categoria
+- 📊 Comparação entre múltiplos carros
+- ❤️ Sistema de favoritos (com login)
+- 🌙 Modo escuro
+- ⚡ Integração com API externa (em desenvolvimento)
+- 📱 Interface responsiva
 
-O projeto também conta com um sistema de favoritos e cálculo automático de score para auxiliar na tomada de decisão.
+---
 
-⚙️ Funcionalidades
-🔎 Explorar carros com filtros
-📊 Cálculo automático de score (custo-benefício)
-⚖️ Comparação entre múltiplos carros
-❤️ Sistema de favoritos
-📄 Página de detalhes do carro
-📌 Paginação de resultados
-🌙 Modo escuro (dark mode)
-🧮 Lógica de Score
+## 📸 Screenshots
 
-O score dos carros é calculado com base na seguinte fórmula:
+### 🔎 Lista de Carros
+![Lista de carros](./screenshots/lista.png)
 
-score = potencia / (consumo * preco)
+### ❤️ Favoritos
+![Favoritos](./screenshots/favoritos.png)
 
-Onde:
+### 🧾 Cadastro de Usuário
+![Cadastro](./screenshots/cadastro.png)
 
-Maior potência → melhor
-Menor consumo → melhor
-Menor preço → melhor
-🛠️ Tecnologias utilizadas
-Python
-Django
-HTML5
-CSS3
-JavaScript
-Bootstrap
-🚀 Como rodar o projeto
+---
+
+## 🛠️ Tecnologias
+
+- Python
+- Django
+- HTML / CSS / JavaScript
+- Bootstrap
+
+---
+
+## 🚀 Como rodar o projeto
+
+```bash
 # Clonar o repositório
-git clone https://github.com/gabrielbastosg/Projeto-Carro
+git clone https://github.com/seu-usuario/seu-repo.git
 
 # Entrar na pasta
-cd Projeto-Carro
+cd seu-repo
 
 # Criar ambiente virtual
 python -m venv venv
 
-# Ativar ambiente (Windows)
-venv\Scripts\activate
+# Ativar ambiente
+venv\Scripts\activate  # Windows
 
 # Instalar dependências
 pip install -r requirements.txt
@@ -53,18 +56,13 @@ pip install -r requirements.txt
 # Rodar servidor
 python manage.py runserver
 
-📈 Status do projeto
+---
 
-✔️ Funcionalidades principais completas (MVP)
-🚧 Melhorias futuras em andamento
+📌 Status
 
-🔮 Melhorias futuras
-Sistema de login e cadastro
-API com Django REST Framework
-Frontend com React
-Dashboard com gráficos
-Sistema de recomendação inteligente
+🚧 Em desenvolvimento
+(API externa ainda limitada)
+
 👨‍💻 Autor
 
-Desenvolvido por Gabriel Bastos
-Projeto com foco em aprendizado e evolução em desenvolvimento web com Django.
+Gabriel Bastos

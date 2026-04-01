@@ -135,52 +135,50 @@ def signup(request):
 
 
 def buscar_carros_api(request):
-    """
-    Retorna carros de exemplo (fake) para testes, sem depender da API externa.
-    """
     make = request.GET.get("make", "")
 
-    # Lista de carros fake
-    carros_fake = [
-        {
-            "make": "Toyota",
-            "model": "Corolla",
-            "year": 2022,
-            "fuel_type": "Gasolina",
-            "image_url": "/static/cars/default_car.png"
-        },
-        {
-            "make": "Honda",
-            "model": "Civic",
-            "year": 2021,
-            "fuel_type": "Flex",
-            "image_url": "/static/cars/default_car.png"
-        },
-        {
-            "make": "Ford",
-            "model": "EcoSport",
-            "year": 2023,
-            "fuel_type": "Diesel",
-            "image_url": "/static/cars/default_car.png"
-        },
-        {
-            "make": "Chevrolet",
-            "model": "Onix",
-            "year": 2022,
-            "fuel_type": "Flex",
-            "image_url": "/static/cars/default_car.png"
-        },
-        {
-            "make": "Fiat",
-            "model": "Argo",
-            "year": 2021,
-            "fuel_type": "Flex",
-            "image_url": "/static/cars/default_car.png"
-        },
-    ]
+    url = f"https://api.api-ninjas.com/v1/cars?make={make}"
+    headers = {"X-Api-Key": os.getenv("API_NINJAS_KEY")}
 
-    # Filtra pelo make se estiver definido
-    if make:
-        carros_fake = [c for c in carros_fake if c["make"].lower() == make.lower()]
+    try:
+        response = requests.get(url, headers=headers)
 
-    return JsonResponse(carros_fake, safe=False)
+        if response.status_code != 200:
+            return JsonResponse([], safe=False)
+
+        data = response.json()
+
+        carros_formatados = []
+
+        for car in data:
+            carros_formatados.append({
+                "make": car.get("make", "").title(),
+                "model": car.get("model", "").title(),
+                "year": car.get("year", "N/A"),
+                "fuel_type": car.get("fuel_type", "N/A"),
+                "image_url": "/static/cars/default_car.png"
+            })
+
+        return JsonResponse(carros_formatados, safe=False)
+
+    except:
+        return JsonResponse([], safe=False)
+
+def testar_api(request):
+    url = "https://api.api-ninjas.com/v1/cars?make=toyota"
+    headers = {"X-Api-Key": os.getenv("API_NINJAS_KEY")}
+
+    response = requests.get(url, headers=headers)
+
+    if response.status_code != 200:
+        return JsonResponse({
+            "erro": "API em manutenção ou chave inválida",
+            "status": response.status_code
+        }, status=500)
+
+    try:
+        data = response.json()
+    except:
+        return JsonResponse({"erro": "Erro ao converter JSON"})
+
+    return JsonResponse(data, safe=False)

@@ -12,4 +12,5 @@ urlpatterns = [
     path('favoritos/', views.lista_favoritos, name='lista_favoritos'),
     path('signup/', signup, name='signup'),
     path('api/carros/', buscar_carros_api, name='buscar_carros_api'),
+    path('testar-api/', views.testar_api, name='testar_api'),
 ]
